@@ -57,8 +57,66 @@
   <audio data-key="75" src="sounds/tom.wav"></audio>
   <audio data-key="76" src="sounds/tink.wav"></audio>
 
-<script>
 
+  <button id="beat-1">Beat</button>
+  <button id="beat-2">Beat</button>
+
+<script>
+  function playSound(e) {
+    const audio = document.querySelector(`audio[data-key="${e.keyCode}"]`)
+    const element = document.querySelector(`div[data-key="${e.keyCode}"]`)
+
+    if (!audio) return;
+
+
+    audio.currentTime = 0;
+    audio.play();
+    element.classList.add('playing');
+  }
+
+
+
+  const keys = document.querySelectorAll('.key');
+
+  keys.forEach(element => {
+    element.addEventListener('transitionend', (e) => {
+      if (e.propertyName === "transform") e.target.classList.remove('playing');
+    })
+  });
+
+
+  window.addEventListener('keydown', playSound)
+
+
+  function beat(keys) {
+    let i = 0; 
+    function playOneBeat() {
+      window.dispatchEvent(new KeyboardEvent('keydown', { keyCode: keys[i] })); 
+      i++;
+    }
+
+    playOneBeat();
+    const handler = setInterval(() => {
+      playOneBeat();
+      if (i > keys.length) {
+        clearInterval(handler);
+      }
+    }, 1000)
+  }
+
+
+  const beatButton1 = document.querySelector('button#beat-1');
+  if (beatButton1) {
+    const keys = new Array(200).fill(83);
+    beatButton1.addEventListener('click', () => beat(keys));
+  }
+
+
+  const beatButton2 = document.querySelector('button#beat-2');
+  if (beatButton2) {
+    const keys = new Array(200).fill(74);
+    beatButton2.addEventListener('click', () => beat(keys));
+  }
 </script>
 
 
